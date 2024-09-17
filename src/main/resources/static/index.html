@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatApp</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+    <h1>ChatApp</h1>
+    <textarea id="messageInput" maxlength="250" placeholder="Enter the Message Here"></textarea>
+    <button id="sendButton" onclick="sendMessage()">Send</button>
+    <button id="retrieveButton" onclick="retrieveMessages()">Retrieve</button>
+
+    <table id="messageTable">
+        <thead>
+        <tr>
+            <th>Messages</th>
+            <th>Timestamps</th>
+        </tr>
+        </thead>
+        <tbody id="tableBody">
+        <!-- Messages will be dynamically inserted here -->
+        </tbody>
+    </table>
+</div>
+
+<script src="/js/script.js"></script>
+</body>
+</html>
