@@ -61,16 +61,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+      - uses: actions/checkout@v3
       # Step 1: Log in to Azure
       - name: Azure Login
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      # Step 2: Log in to ACR
-      - name: Log in to ACR
-        run: |
-          az acr login --name ${{ secrets.ACR_NAME }}
 
       # Step 3: Deploy Docker image to Container App
       - name: Deploy Docker image to Container App
