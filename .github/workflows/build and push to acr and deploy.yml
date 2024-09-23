@@ -1,12 +1,11 @@
 name: Build and Deploy Docker Image to ACR and Azure Container App
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
+    branches: [ "main"]
+  push:
+    branches: [ "main"]
+
 
 jobs:
   build:
