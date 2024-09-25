@@ -1,4 +1,4 @@
-name: Build and Deploy Docker Image to ACR and Azure Container App
+name: Build and Push Docker Image to ACR
 
 on:
   push:
@@ -17,65 +17,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Set up JDK 17
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      # Step 3: Cache Gradle dependencies
-      - name: Cache Gradle packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle
-
-      # Step 4: Grant execute permissions to Gradle wrapper
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-
-      # Step 5: Build the JAR using Gradle
-      - name: Build with Gradle
-        run: ./gradlew build
-
-      # Step 6: Log in to ACR
+      # Step 2: Log in to ACR using username and password
       - name: Log in to ACR
         run: |
           echo "${{ secrets.ACR_PASSWORD }}" | docker login ${{ secrets.ACR_NAME }}.azurecr.io --username ${{ secrets.ACR_USERNAME }} --password-stdin
 
-      # Step 7: Build the Docker image
+      # Step 3: Build the Docker image
       - name: Build Docker image
-        run: docker build . -t ${{ secrets.ACR_NAME }}.azurecr.io/chatapp:latest
-
-      # Step 8: Push the Docker image to ACR
-      - name: Push Docker image
-        run: docker push ${{ secrets.ACR_NAME }}.azurecr.io/chatapp:latest
-
-  deploy:
-    needs: build  # This ensures the deploy job runs after the build job
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-      - uses: actions/checkout@v3
-      # Step 1: Log in to Azure
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      # Step 3: Deploy Docker image to Container App
-      - name: Deploy Docker image to Container App
         run: |
-          az containerapp update \
-            --name ${{ secrets.CONTAINER_APP_NAME }} \
-            --resource-group ${{ secrets.RESOURCE_GROUP }} \
-            --image ${{ secrets.ACR_NAME }}.azurecr.io/chatapp:latest \
-            --registry-server ${{ secrets.ACR_NAME }}.azurecr.io \
-            --registry-username ${{ secrets.ACR_USERNAME }} \
-            --registry-password ${{ secrets.ACR_PASSWORD }}
+          docker build . -t ${{ secrets.ACR_NAME }}.azurecr.io/chatapp:latest
+
+      # Step 4: Push the Docker image to ACR
+      - name: Push Docker image
+        run: |
+          docker push ${{ secrets.ACR_NAME }}.azurecr.io/chatapp:latest
