@@ -4,8 +4,15 @@ FROM openjdk:17-jdk-slim
 # Set the working directory inside the container
 WORKDIR /app
 
+# Copy the Gradle wrapper and necessary scripts
+COPY gradlew ./
+COPY gradle ./gradle
+
 # Copy the source code to the container
 COPY . .
+
+# Ensure the Gradle wrapper has execute permissions
+RUN chmod +x ./gradlew
 
 # Install tzdata for timezone configuration
 RUN apt-get update && apt-get install -y tzdata
